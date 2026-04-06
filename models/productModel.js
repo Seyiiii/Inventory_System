@@ -6,6 +6,10 @@ const productSchema = new mongoose.Schema({
         required: true,
         ref: 'User'
     },
+    image: {
+        type: String,
+        // default: "https://res.cloudinary.com/demo/image/upload/v1312461204/sample.jpg"
+    },
     sku: {
         type: String,
         required: true,
@@ -25,7 +29,7 @@ const productSchema = new mongoose.Schema({
     },
     stock_quantity: {
         type: Number,
-        dafault: 0,
+        default: 0,
         min: 0
     }, 
     category_id: {

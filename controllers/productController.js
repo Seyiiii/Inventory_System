@@ -4,6 +4,11 @@ import asyncHandler from "../middlewares/asyncHandler.js";
 
 export const createProduct = asyncHandler(async (req, res) => {
     req.body.user = req.user.id;
+
+    if (req.file) {
+        req.body.image = req.file.path;
+    }
+
     const newProduct = await Product.create(req.body);
     res.status(201).json({
         message: "Product created successfully!!",
@@ -55,7 +60,7 @@ export const updatedProduct = asyncHandler(async (req, res) => {
         id,
         req.body,
         {
-            new: true,
+            returnDocument: 'after',
             runValidators: true
         }
     );
