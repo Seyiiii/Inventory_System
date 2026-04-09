@@ -56,6 +56,18 @@ export const getProductById = asyncHandler(async (req, res) => {
 export const updatedProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
 
+    let product = await Product.findById(id);
+
+    if (!product) {
+        res.status(404);
+        throw new Error("Product not found. Cannot Update.");
+    }
+
+    if (req.user.role === 'storekeeper' && product.user.toString() != req.user.id) {
+        res.status(403);
+        throw new Error("You  are not authorized to edit a product that you did not create.");
+    }
+
     const updatedProduct = await Product.findByIdAndUpdate(
         id,
         req.body,
@@ -65,11 +77,6 @@ export const updatedProduct = asyncHandler(async (req, res) => {
         }
     );
 
-    if (!updatedProduct) {
-        res.status(404);
-        throw new Error("Product not found. Cannot Update.");
-    }
-
     res.status(200).json({
         message: "Product updated successfully",
         product: updatedProduct
@@ -78,15 +85,24 @@ export const updatedProduct = asyncHandler(async (req, res) => {
 
 export const deleteProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const deletedProduct = await Product.findByIdAndDelete(id);
 
-    if (!deletedProduct) {
+    const product = await Product.findById(id);
+
+    if (!product) {
         res.status(404);
         throw new Error("Product not found. Cannot delete.");
     }
 
+    if (req.user.role === 'storekepper' && product.user.toString() !== req.user.id) {
+        res.status(403);
+        throw new Error("You are not authorized to delete a product that you did not create.");
+    }
+
+    await Product.findByIdAndDelete(id);
+
+
     res.status(200).json({
         message: "Product deleted successfully!",
-        product: deletedProduct
+        id: id
     });
 });

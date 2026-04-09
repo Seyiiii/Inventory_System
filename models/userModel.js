@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
-        require: [true, "Please insert your name"] 
+        required: [true, "Please insert your name"] 
     },
     email: {
         type: String,
@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type:  String,
-        enum: ['user', 'manager', 'admin'],
+        enum: ['user', 'storekeeper', 'manager', 'admin'],
         default: 'user'
     }
 }, {

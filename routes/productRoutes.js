@@ -14,8 +14,8 @@ const router = express.Router();
 
 router.get('/products', getAllProducts);
 router.get('/products/:id', getProductById);
-router.post('/products', protect, authorize('admin'), upload.single('image'), createProduct);
-router.patch('/products/:id', protect, authorize('admin'), updatedProduct);
-router.delete('/products/:id', protect, authorize('admin'), deleteProduct);
+router.post('/products', protect, authorize('admin', 'storekeeper'), upload.single('image'), createProduct);
+router.patch('/products/:id', protect, authorize('admin', 'storekeeper'), updatedProduct);
+router.delete('/products/:id', protect, authorize('admin', 'storekeeper'), deleteProduct);
 
 export default router;
