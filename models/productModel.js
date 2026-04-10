@@ -27,11 +27,21 @@ const productSchema = new mongoose.Schema({
         required: true,
         min: 0
     },
+    base_currency: {
+        type: String,
+        required: true,
+        default: "NGN"
+    },
     stock_quantity: {
         type: Number,
         default: 0,
         min: 0
-    }, 
+    },
+    low_stock_threshold: {
+        type: Number,
+        default: 20,
+        min: 0
+    },
     category_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category'

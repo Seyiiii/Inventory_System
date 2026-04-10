@@ -107,3 +107,64 @@ export const deleteProduct = asyncHandler(async (req, res) => {
         id: id
     });
 });
+
+
+export const getLowStockProducts = asyncHandler(async (req, res) => {
+    const lowStockItems = await Product.find({
+        $expr: { $lte: ["$stock_quantity", "$low_stock_threshold"] }
+    })
+    .populate('category_id', 'name')
+    .sort({ stock_quantity: 1 });
+
+    res.status(200).json({
+        count: lowStockItems.length,
+        alert_status: "Low Stock Alert",
+        products: lowStockItems
+    });
+});
+
+// External API endpoint to fetch PRoducts prices in different currencies
+export const getProductPriceInCurrency = asyncHandler(async (req, res) => {
+    const { id, currencyCode } = req.params;
+
+    const product = await Product.findById(id);
+    if (!product) {
+        res.status(404);
+        throw new Error("Product not found.");
+    }
+
+    const targetCurrency = currencyCode.toUpperCase();
+
+    const apiUrl = `https://open.er-api.com/v6/latest/${product.base_currency}`;
+
+    try {
+        
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        if (data.result !== "success") {
+            res.status(502);
+            throw new Error("Failed to fetch live exchange rates.");
+        }
+
+        if (!data.rates[targetCurrency]) {
+            res.status(400);
+            throw new Error(`Currency code '${targetCurrency}' is not supported.`);
+        }
+
+        const exchangeRate = data.rates[targetCurrency];
+        const convertedPrice = product.price * exchangeRate;
+
+        res.status(200).json({
+            product_name: product.name,
+            base_price: product.price,
+            base_currency: product.base_currency,
+            target_currency: targetCurrency,
+            exchange_rate: exchangeRate,
+            converted_price: Number(convertedPrice.toFixed(2))
+        });
+    } catch (error) {
+        res.status(500);
+        throw new Error(`External API Error: ${error.message}`);        
+    }
+})
