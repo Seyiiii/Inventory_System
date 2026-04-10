@@ -2,6 +2,7 @@ import Product from '../models/productModel.js';
 import asyncHandler from "../middlewares/asyncHandler.js";
 
 
+
 export const createProduct = asyncHandler(async (req, res) => {
     req.body.user = req.user.id;
 
