@@ -40,7 +40,7 @@ export const addToCart = asyncHandler(async (req, res) => {
 
     await cart.save();
 
-    res.stauts(200).json({
+    res.status(200).json({
         message: 'Item added to cart successfully',
         cart
     });
