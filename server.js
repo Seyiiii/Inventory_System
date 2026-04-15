@@ -3,6 +3,7 @@ import connectDB from './db.js';
 import dotenv from 'dotenv';
 import productRoutes from './routes/productRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import { errorHandler } from './middlewares/errorMiddleware.js';
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use('/api', productRoutes);
 app.use('/api', categoryRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api', cartRoutes);
 
 app.use(errorHandler);
 
