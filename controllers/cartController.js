@@ -46,3 +46,27 @@ export const addToCart = asyncHandler(async (req, res) => {
     });
 
 });
+
+export const getCart = asyncHandler(async (req, res) => {
+    const userId =req.user.id;
+    
+    const cart = await Cart.findOne({ user: userId })
+        .populate({
+            path: 'items.product',
+            select: 'name sku price image'
+        });
+
+    if (!cart) {
+        return res.status(200).json({
+            message: "your cart is empty",
+            cart: {
+                items: [],
+                totalPrice: 0
+            }
+        });
+    }
+
+    res.status(200).json({
+        cart
+    });
+});
