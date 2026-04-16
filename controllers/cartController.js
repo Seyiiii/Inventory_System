@@ -70,3 +70,50 @@ export const getCart = asyncHandler(async (req, res) => {
         cart
     });
 });
+
+export const removeItemFromCart = asyncHandler(async (req, res) => {
+    const userId = req.user.id;
+    const { productId } = req.params;
+
+    const cart = await Cart.findOne({ user: userId });
+
+    if (!cart) {
+        res.status(404);
+        throw new Error('Cart not found');
+    }
+
+    const initialLength = cart.items.length;
+    cart.items = cart.items.filter(item => item.product.toString() !== productId);
+
+    if (cart.items.length === initialLength) {
+        res.status(404);
+        throw new Error('Item not found in your cart');
+    }
+
+    await cart.save();
+
+    res.status(200).json({
+        message: 'Item removed from cart',
+        cart
+    });
+});
+
+
+export const clearcart = asyncHandler(async (req, res) => {
+    const userId = req.user.id;
+
+    const cart = await Cart.findOne({ user: userId });
+
+    if (!cart) {
+        res.status(404);
+        throw new Error('Cart not found');
+    }
+    cart.items = [];
+
+    await cart.save();
+
+    res.status(200).json({
+        message: 'Cart cleared seccessfully',
+        cart
+    });
+});
