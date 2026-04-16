@@ -113,7 +113,7 @@ export const clearcart = asyncHandler(async (req, res) => {
     await cart.save();
 
     res.status(200).json({
-        message: 'Cart cleared seccessfully',
+        message: 'Cart cleared successfully!!',
         cart
     });
 });
